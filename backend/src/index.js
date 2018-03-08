@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
 const dbUrl = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DB}`;
@@ -10,11 +11,10 @@ const User = require("./user.js");
 
 app = express();
 app.use(express.static('assets'));
+app.use(bodyParser.json());
 
 app.post('/api/login', (req, res) => {
     console.log(req.body);
-    let u = User.find({ username: req.query.username });
-    console.log(u);
     res.send("ok");
 });
 
