@@ -1,0 +1,14 @@
+{
+  "name": "fcc-voting-app-backend",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "author": "Steven Branson",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2",
+    "mongoose": "^5.0.9",
+    "node": "^9.7.0"
+  }
+}
