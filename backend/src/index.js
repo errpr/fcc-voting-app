@@ -14,19 +14,51 @@ app.use(express.static('assets'));
 app.use(bodyParser.json());
 
 app.post('/api/login', (req, res) => {
-    console.log(req.body);
-    res.send("ok");
+    User.getAuthenticated(req.body.username, req.body.password, function(error, user, reason) {
+        if(reason) {
+            switch(reason) {
+                case(User.failedLogin.NOT_FOUND): console.log("User not found: " + req.body.username); break;
+                case(User.failedLogin.PASSWORD_INCORRECT): console.log("Password incorrect for user: " + req.body.username); break;
+                case(User.failedLogin.MAX_ATTEMPTS): console.log("User used max attempts: " + req.body.username); break;
+            }
+            res.status(400).send("failed");
+            return;
+        }
+
+        if(error) {
+            console.log(error);
+            res.status(500).send("failed");
+            return;
+        }
+
+        // create a session here I guess
+        console.log("User auth success: " + user.username);
+        res.send("ok");
+    });
 });
 
 // create user
 app.post('/api/user', (req, res) => {
-    console.log(req.body);
-    let u = new User({
-        username: 'errpr',
-        password: 'asdf'
+    User.findOne({username: req.body.username}, function(error, user) {
+        if(error) {
+            console.log(error);
+            res.status(500).send("failed");
+            return;
+        }
+        if(user) { 
+            console.log("User already exists: " + user.username);
+            res.status(400).send("failed"); 
+            return; 
+        }
+        let u = new User({
+            username: req.body.username,
+            password: req.body.password
+        });
+        u.save().then(u2 => { 
+            res.send(u2._id);
+            // should create session here too
+        }).catch(error => console.log(error));
     });
-    console.log(u);
-    res.send("ok");
 });
 
 const listener = app.listen(process.env.PORT, function () {

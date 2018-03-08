@@ -15,6 +15,18 @@ export default class App extends React.Component {
                 body: JSON.stringify({ username: username, password: password }) 
             }).then(response => console.log(response));
         }
+        this.create = (_e) => {
+            let username = document.getElementById("username-input").value;
+            let password = document.getElementById("password-input").value;
+            fetch("/api/user", { 
+                method: "POST", 
+                headers: {
+                    "Accept" : "application/json",
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify({ username: username, password: password }) 
+            }).then(response => console.log(response));
+        }
     }
     render() {
         return (
