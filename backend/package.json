@@ -10,5 +10,9 @@
     "express": "^4.16.2",
     "mongoose": "^5.0.9",
     "node": "^9.7.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "default": "start"
   }
 }
