@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const mongoose = require('mongoose');
 const dbUrl = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DB}`;
@@ -12,6 +14,12 @@ const User = require("./user.js");
 app = express();
 app.use(express.static('assets'));
 app.use(bodyParser.json());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
 
 app.post('/api/login', (req, res) => {
     User.getAuthenticated(req.body.username, req.body.password, function(error, user, reason) {
@@ -31,7 +39,7 @@ app.post('/api/login', (req, res) => {
             return;
         }
 
-        // create a session here I guess
+        req.session.user = user.id;
         console.log("User auth success: " + user.username);
         res.send("ok");
     });
@@ -54,9 +62,9 @@ app.post('/api/user', (req, res) => {
             username: req.body.username,
             password: req.body.password
         });
-        u.save().then(u2 => { 
-            res.send(u2._id);
-            // should create session here too
+        u.save().then(u2 => {
+            req.session.user = u2.id;
+            res.send(u2.username);
         }).catch(error => console.log(error));
     });
 });

@@ -12,9 +12,10 @@ export default class App extends React.Component {
                     "Accept" : "application/json",
                     "Content-Type" : "application/json"
                 },
+                credentials: "same-origin",
                 body: JSON.stringify({ username: username, password: password }) 
             }).then(response => console.log(response));
-        }
+        };
         this.create = (_e) => {
             let username = document.getElementById("username-input").value;
             let password = document.getElementById("password-input").value;
@@ -24,9 +25,10 @@ export default class App extends React.Component {
                     "Accept" : "application/json",
                     "Content-Type" : "application/json"
                 },
+                credentials: "same-origin",
                 body: JSON.stringify({ username: username, password: password }) 
             }).then(response => console.log(response));
-        }
+        };
     }
     render() {
         return (
