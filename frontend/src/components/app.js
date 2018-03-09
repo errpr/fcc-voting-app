@@ -52,6 +52,19 @@ class App extends React.Component {
         }
     }
 
+    attemptSessionLogin() {
+        fetch("/api/login", {
+            method: "GET",
+            credentials: "same-origin"
+        }).then(response => response.ok ? response.json() : null).then(json => this.setState({ user: json }));
+    }
+
+    componentDidMount() {
+        if(this.state.user == null) {
+            this.attemptSessionLogin();
+        }
+    }
+
     render() {
         return (
             <div>

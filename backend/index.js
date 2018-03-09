@@ -21,6 +21,34 @@ app.use(session({
     store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 
+// login with previous session
+app.get('/api/login', (req, res) => {
+    if(req.session && req.session.user) {
+        User.findById(req.session.user, function(error, user) {
+            if(error) {
+                console.log(error);
+                res.status(400).send("failed");
+                return;
+            }
+
+            if(user) {
+                res.json({
+                    name: user.username,
+                    id: user.id
+                });
+                return;
+            }
+
+            console.log("No user found matching session");
+            res.status(400).send("failed");
+        });
+    } else {
+        console.log("No session");
+        res.status(400).send("failed");
+    }
+});
+
+// login and get new session
 app.post('/api/login', (req, res) => {
     User.getAuthenticated(req.body.username, req.body.password, function(error, user, reason) {
         if(reason) {
@@ -49,6 +77,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+// log out
 app.delete("/api/login", (req, res) => {
     req.session.destroy(function(error) {
         if(error) {
