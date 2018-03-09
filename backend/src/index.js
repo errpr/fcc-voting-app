@@ -40,7 +40,20 @@ app.post('/api/login', (req, res) => {
         }
 
         req.session.user = user.id;
+        req.session.cookie.username = user.username;
         console.log("User auth success: " + user.username);
+        res.json({
+            name: user.username,
+            id: user.id
+        });
+    });
+});
+
+app.delete("/api/login", (req, res) => {
+    req.session.destroy(function(error) {
+        if(error) {
+            res.status(400).send("Could not destroy session");
+        }
         res.send("ok");
     });
 });
@@ -64,7 +77,11 @@ app.post('/api/user', (req, res) => {
         });
         u.save().then(u2 => {
             req.session.user = u2.id;
-            res.send(u2.username);
+            req.sessions.cookie.username = u2.username;
+            res.json({
+                name: u2.username,
+                id: u2.id,
+            });
         }).catch(error => console.log(error));
     });
 });
