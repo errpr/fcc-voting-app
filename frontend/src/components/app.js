@@ -1,11 +1,12 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import Nav from './nav.js';
 import Body from './body.js';
 
-export default class App extends React.Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
-
+        console.log(props);
         this.state = {
             user: null
         }
@@ -21,7 +22,9 @@ export default class App extends React.Component {
                 },
                 credentials: "same-origin",
                 body: JSON.stringify({ username: username, password: password }) 
-            }).then(response => response.ok ? response.json() : null).then(json => this.setState({ user: json }));
+            }).then(response => response.ok ? response.json() : null)
+            .then(json => this.setState({ user: json }))
+            .then(_ => this.props.history.push("/"));
         };
 
         this.create = (_e) => {
@@ -35,32 +38,28 @@ export default class App extends React.Component {
                 },
                 credentials: "same-origin",
                 body: JSON.stringify({ username: username, password: password }) 
-            }).then(response => response.ok ? response.json() : null).then(json => this.setState({ user: json }));
+            }).then(response => response.ok ? response.json() : null)
+            .then(json => this.setState({ user: json }))
+            .then(_ => this.props.history.push("/"));
         };
 
         this.logout = (_e) => {
             fetch("/api/login", {
                 method: "DELETE",
                 credentials: "same-origin"
-            }).then(response => response.ok ? this.setState({ user: null }) : console.log("logout failed"));
+            }).then(response => response.ok ? this.setState({ user: null }) : console.log("logout failed"))
+            .then(_ => this.props.history.push("/"));
         }
     }
 
     render() {
         return (
             <div>
-                <Nav user={this.state.user} />
-                <Body />
-                { !this.state.user &&
-                    <div>
-                        <input type="text" name="username" id="username-input" />
-                        <input type="password" name="password" id="password-input" />
-                        <button onClick={this.login}>Login</button>
-                        <button onClick={this.create}>Create</button>
-                    </div>
-                }
-                <button onClick={this.logout}>Logout</button>
+                <Nav user={this.state.user} logout={this.logout} />
+                <Body login={this.login} create={this.create} />
             </div>
         );
     }
 }
+
+export default withRouter(App);
