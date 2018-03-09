@@ -1,7 +1,7 @@
 {
   "name": "fcc-voting-app-backend",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "index.js",
   "author": "Steven Branson",
   "license": "MIT",
   "dependencies": {
@@ -15,7 +15,7 @@
     "node": "^9.7.0"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node index.js",
     "default": "start"
   }
 }

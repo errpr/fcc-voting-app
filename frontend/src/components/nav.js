@@ -6,7 +6,10 @@ export default function Nav(props) {
         <div className="nav">
             {
                 props.user && 
-                <h3>Welcome, {props.user.name}</h3>
+                <div>
+                    <h3>Welcome, {props.user.name}</h3>
+                    <button onClick={props.logout}>Log out.</button>
+                </div>
             }
             {
                 !props.user &&

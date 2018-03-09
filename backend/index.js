@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const dbUrl = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DB}`;
 mongoose.connect(dbUrl).catch(error => console.log(error));
 
-const User = require("./user.js");
+const User = require("./models/user.js");
 
 app = express();
 app.use(express.static('assets'));
@@ -77,13 +77,16 @@ app.post('/api/user', (req, res) => {
         });
         u.save().then(u2 => {
             req.session.user = u2.id;
-            req.sessions.cookie.username = u2.username;
             res.json({
                 name: u2.username,
                 id: u2.id,
             });
         }).catch(error => console.log(error));
     });
+});
+
+app.get("*", (req, res) => {
+    res.sendFile(__dirname + '/assets/index.html');
 });
 
 const listener = app.listen(process.env.PORT, function () {
