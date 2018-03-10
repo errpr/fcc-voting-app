@@ -21,6 +21,7 @@ let choiceSchema = new Schema({
 });
 
 let pollSchema = new Schema({
+    question: { type: String, required: true },
     choices: { 
         type: [choiceSchema], 
         required: true,
@@ -32,7 +33,7 @@ let pollSchema = new Schema({
         } 
     },
     votes: { type: [voteSchema] },
-    owner: { type: Schema.Types.ObjectId, required: true },
+    owner: { type: Schema.Types.ObjectId, required: true, index: true },
     modifiedDate: { type: Date }
 });
 

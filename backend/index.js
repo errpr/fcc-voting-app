@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const hashids = new (require('hashids'))(process.env.HASH_SALT);
 const MongoStore = require('connect-mongo')(session);
 
 const mongoose = require('mongoose');
@@ -35,7 +36,7 @@ app.get('/api/login', (req, res) => {
             if(user) {
                 res.json({
                     name: user.username,
-                    id: user.id
+                    id: hashids.encodeHex(user.id)
                 });
                 return;
             }
@@ -73,7 +74,7 @@ app.post('/api/login', (req, res) => {
         console.log("User auth success: " + user.username);
         res.json({
             name: user.username,
-            id: user.id
+            id: hashids.encodeHex(user.id)
         });
     });
 });
@@ -89,7 +90,7 @@ app.delete("/api/login", (req, res) => {
 });
 
 // create user
-app.post('/api/user', (req, res) => {
+app.post('/api/users', (req, res) => {
     User.findOne({username: req.body.username}, function(error, user) {
         if(error) {
             console.log(error);
@@ -109,14 +110,33 @@ app.post('/api/user', (req, res) => {
             req.session.user = u2.id;
             res.json({
                 name: u2.username,
-                id: u2.id,
+                id: hashids.encodeHex(u2.id),
             });
         }).catch(error => console.log(error));
     });
 });
 
-app.get("/api/poll/:id", (req, res) => {
-    Poll.findById(req.params.id, function(error, poll) {
+app.get("/api/users/:id/polls", (req, res) => {
+    let user_id = hashids.decodeHex(req.params.id);
+    Poll.find({owner: user_id})
+        .sort({ modifiedDate: -1 })
+        .select({question: 1, choices: 1})
+        .then(polls => {
+            console.log(polls);
+            res.json(polls.map(poll => {
+                return {
+                    id: hashids.encodeHex(poll.id),
+                    question: poll.question,
+                    choices: poll.choices
+                }
+            }));
+        }).catch(error => console.log(error));
+});
+
+// get specific poll
+app.get("/api/polls/:id", (req, res) => {
+    let poll_id = hashids.decodeHex(req.params.id)
+    Poll.findById(poll_id, function(error, poll) {
         if(error) {
             console.log(error);
         }
@@ -125,9 +145,11 @@ app.get("/api/poll/:id", (req, res) => {
     });
 });
 
-app.post("/api/poll", (req, res) => {
+// create new poll
+app.post("/api/polls", (req, res) => {
     console.log(req.body.choices);
     Poll.create({
+        question: req.body.question,
         choices: req.body.choices,
         votes: [],
         owner: req.session.user
@@ -140,6 +162,11 @@ app.post("/api/poll", (req, res) => {
     });
 });
 
+app.all("/api/*", (req, res) => {
+    res.status("400").send("failed");
+});
+
+// send react app
 app.get("*", (req, res) => {
     res.sendFile(__dirname + '/assets/index.html');
 });

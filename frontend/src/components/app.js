@@ -8,7 +8,8 @@ class App extends React.Component {
         super(props);
         console.log(props);
         this.state = {
-            user: null
+            user: null,
+            polls: null
         }
 
         this.login = (_e) => {
@@ -30,7 +31,7 @@ class App extends React.Component {
         this.create = (_e) => {
             let username = document.getElementById("username-input").value;
             let password = document.getElementById("password-input").value;
-            fetch("/api/user", { 
+            fetch("/api/users", { 
                 method: "POST", 
                 headers: {
                     "Accept" : "text/html; application/json",
@@ -49,6 +50,12 @@ class App extends React.Component {
                 credentials: "same-origin"
             }).then(response => response.ok ? this.setState({ user: null }) : console.log("logout failed"))
             .then(_ => this.props.history.push("/"));
+        }
+
+        this.getMyPolls = (_e) => {
+            fetch(`/api/users/${this.state.user.id}/polls`, { method: "GET", credentials: "same-origin" })
+                .then(response => response.ok ? response.json() : null)
+                .then(json => this.setState({ polls: json }));
         }
     }
 
@@ -70,6 +77,8 @@ class App extends React.Component {
             <div>
                 <Nav user={this.state.user} logout={this.logout} />
                 <Body login={this.login} create={this.create} />
+                <pre id="pollDisplay">{JSON.stringify(this.state.polls, null, 2)}</pre>
+                <button onClick={this.getMyPolls}>Get Polls</button>
             </div>
         );
     }
