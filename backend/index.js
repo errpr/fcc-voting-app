@@ -10,6 +10,7 @@ const dbUrl = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process
 mongoose.connect(dbUrl).catch(error => console.log(error));
 
 const User = require("./models/user.js");
+const Poll = require("./models/poll.js");
 
 app = express();
 app.use(express.static('assets'));
@@ -111,6 +112,31 @@ app.post('/api/user', (req, res) => {
                 id: u2.id,
             });
         }).catch(error => console.log(error));
+    });
+});
+
+app.get("/api/poll/:id", (req, res) => {
+    Poll.findById(req.params.id, function(error, poll) {
+        if(error) {
+            console.log(error);
+        }
+        console.log(poll);
+        res.send("ok");
+    });
+});
+
+app.post("/api/poll", (req, res) => {
+    console.log(req.body.choices);
+    Poll.create({
+        choices: req.body.choices,
+        votes: [],
+        owner: req.session.user
+    }, function(error, poll) {
+        if(error) {
+            console.log(error);
+        }
+        console.log(poll);
+        res.send("ok");
     });
 });
 
