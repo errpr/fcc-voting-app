@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let voteSchema = new Schema({
-    owner: { type: Schema.Types.ObjectId },
+    owner: { type: Schema.Types.ObjectId, index: { unique: true} },
     ipAddress: { type: String },
     choice: { type: Schema.Types.ObjectId, required: true }
 });
 
 voteSchema.pre('validate', function(next) {
-    if(!owner && !ipAddress) {
+    if(!this.owner && !this.ipAddress) {
         next(new Error("Must have either ipAddress or owner set"));
         return;
     }
@@ -38,9 +38,10 @@ let pollSchema = new Schema({
 });
 
 pollSchema.pre('save', function(next) {
-    if(this.votes && this.votes.length > 0) {
-        this.choices.forEach(function(choice) {
-            choice.voteSum = this.votes.filter(vote => vote.choice === choice.id).length;
+    let poll = this;
+    if(poll.votes && poll.votes.length > 0) {
+        poll.choices.forEach(function(choice) {
+            choice.voteSum = poll.votes.filter(vote => vote.choice == choice.id).length;
         });
     }
     this.modifiedDate = Date.now();

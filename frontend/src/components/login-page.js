@@ -1,7 +1,10 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 
 const LoginPage = (props) => {
+    if(props.user) {
+        return <Redirect to='/' />
+    }
     return(
         <div>
             <h3>Log in</h3>

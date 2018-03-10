@@ -1,6 +1,10 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 export default function CreateUserPage(props) {
+    if(props.user) {
+        return <Redirect to='/' />
+    }
     return(
         <div>
             <h3>Create a new user</h3>

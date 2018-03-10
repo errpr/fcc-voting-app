@@ -42,11 +42,11 @@ app.get('/api/login', (req, res) => {
             }
 
             console.log("No user found matching session");
-            res.status(400).send("failed");
+            res.status(403).send();
         });
     } else {
         console.log("No session");
-        res.status(400).send("failed");
+        res.status(403).send();
     }
 });
 
@@ -116,32 +116,92 @@ app.post('/api/users', (req, res) => {
     });
 });
 
+// get all polls created by specific user
 app.get("/api/users/:id/polls", (req, res) => {
     let user_id = hashids.decodeHex(req.params.id);
     Poll.find({owner: user_id})
         .sort({ modifiedDate: -1 })
         .select({question: 1, choices: 1})
         .then(polls => {
-            console.log(polls);
-            res.json(polls.map(poll => {
+            console.log(polls[0].question);
+            console.log(polls[0].choices);
+            let data = polls.map(poll => { return {
+                id: hashids.encodeHex(poll.id),
+                question: poll.question,
+                choices: poll.choices
+            } });
+            res.json(data);
+        }).catch(error => console.log(error));
+});
+
+// get polls for the front page
+app.get("/api/polls/hot", (req, res) => {
+    Poll.find({})
+        .sort({ modifiedDate: -1 })
+        .limit(10)
+        .select({question: 1, choices: 1, owner: 1})
+        .then(polls => {
+            let data = polls.map(poll => {
                 return {
                     id: hashids.encodeHex(poll.id),
                     question: poll.question,
                     choices: poll.choices
                 }
-            }));
+            });
+            res.json(data);
         }).catch(error => console.log(error));
-});
+})
 
 // get specific poll
 app.get("/api/polls/:id", (req, res) => {
-    let poll_id = hashids.decodeHex(req.params.id)
+    let poll_id = hashids.decodeHex(req.params.id);
     Poll.findById(poll_id, function(error, poll) {
         if(error) {
             console.log(error);
         }
         console.log(poll);
         res.send("ok");
+    });
+});
+
+// vote for a choice
+app.put("/api/polls/:id/vote/:choice_id", (req, res) => {
+    let poll_id = hashids.decodeHex(req.params.id);
+    let choice_id = req.params.choice_id;
+    console.log(req.session.user);
+    Poll.findById(poll_id, function(error, poll) {
+        if(error) {
+            console.log(error);
+        }
+        console.log(poll);
+        let alreadyVoted;
+        if(req.session.user) {
+            alreadyVoted = poll.votes.find(vote => vote.owner == req.session.user);
+        } else {
+            alreadyVoted = poll.votes.find(vote => vote.ipAddress == req.ip);
+        }
+        if(alreadyVoted) {
+            console.log("Already voted! updating choice");
+            poll.votes.id(alreadyVoted.id).choice = choice_id;
+            poll.save(function(error) {
+                if(error) {
+                    console.log(error);
+                }
+                res.send("ok");
+            });
+        } else {
+            poll.votes.push({
+                owner: req.session.user,
+                ipAddress: req.ip,
+                choice: choice_id
+            });
+            poll.save(function(error) {
+                if(error) {
+                    console.log(error);
+                }
+                res.send("ok");
+            });
+        }
     });
 });
 

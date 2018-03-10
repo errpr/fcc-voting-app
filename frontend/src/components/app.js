@@ -8,8 +8,7 @@ class App extends React.Component {
         super(props);
         console.log(props);
         this.state = {
-            user: null,
-            polls: null
+            user: null
         }
 
         this.login = (_e) => {
@@ -24,8 +23,7 @@ class App extends React.Component {
                 credentials: "same-origin",
                 body: JSON.stringify({ username: username, password: password }) 
             }).then(response => response.ok ? response.json() : null)
-            .then(json => this.setState({ user: json }))
-            .then(_ => this.props.history.push("/"));
+            .then(json => this.setState({ user: json }));
         };
 
         this.create = (_e) => {
@@ -40,22 +38,14 @@ class App extends React.Component {
                 credentials: "same-origin",
                 body: JSON.stringify({ username: username, password: password }) 
             }).then(response => response.ok ? response.json() : null)
-            .then(json => this.setState({ user: json }))
-            .then(_ => this.props.history.push("/"));
+            .then(json => this.setState({ user: json }));
         };
 
         this.logout = (_e) => {
             fetch("/api/login", {
                 method: "DELETE",
                 credentials: "same-origin"
-            }).then(response => response.ok ? this.setState({ user: null }) : console.log("logout failed"))
-            .then(_ => this.props.history.push("/"));
-        }
-
-        this.getMyPolls = (_e) => {
-            fetch(`/api/users/${this.state.user.id}/polls`, { method: "GET", credentials: "same-origin" })
-                .then(response => response.ok ? response.json() : null)
-                .then(json => this.setState({ polls: json }));
+            }).then(response => response.ok ? this.setState({ user: null }) : console.log("logout failed"));
         }
     }
 
@@ -76,9 +66,9 @@ class App extends React.Component {
         return (
             <div>
                 <Nav user={this.state.user} logout={this.logout} />
-                <Body login={this.login} create={this.create} />
-                <pre id="pollDisplay">{JSON.stringify(this.state.polls, null, 2)}</pre>
-                <button onClick={this.getMyPolls}>Get Polls</button>
+                <Body login={this.login} 
+                      create={this.create}
+                      user={this.state.user} />
             </div>
         );
     }
