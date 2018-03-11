@@ -25,7 +25,7 @@ export default class FrontPage extends React.Component {
         }
         return(
             <div className="body">
-                <Link id="create-poll-button" to="/polls/create">Create a Poll</Link>
+                <Link className="big-button" id="create-poll-button" to="/polls/create">Create a Poll</Link>
                 <div className="spacer"></div>
                 <h1>Current Polls</h1>
                 <div className="hot-polls">

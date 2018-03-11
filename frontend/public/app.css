@@ -71,13 +71,18 @@ button, a {
     color: black;
 }
 
-#create-poll-button {
+.big-button {
     background-color: white;
     border-radius: 3px;
     padding: 1em;
     border: 1px solid #444;
     color: #444;
-    width: 9em;
     text-align: center;
     text-decoration: none;
+}
+
+.login-input {
+    border-bottom: 1px solid black;
+    padding: 0.5em;
+    margin: 0.5em;
 }
