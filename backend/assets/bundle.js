@@ -931,6 +931,18 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});
 
 /***/ }),
 
+/***/ "./src/components/choice.js":
+/*!**********************************!*\
+  !*** ./src/components/choice.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.default = Choice;\n\nvar _react = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nvar _react2 = _interopRequireDefault(_react);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction mapCountToWidth(count, total) {\n    return count * 100 / total;\n}\n\nfunction Choice(props) {\n    if (props.showResults) {\n        var barWidth = mapCountToWidth(props.choice.voteSum, props.totalVotes);\n        return _react2.default.createElement(\n            \"li\",\n            { className: \"choice-container\" },\n            _react2.default.createElement(\n                \"div\",\n                { className: \"choice-name\" },\n                props.choice.name\n            ),\n            _react2.default.createElement(\n                \"div\",\n                { className: \"choice-result-bar-container\" },\n                _react2.default.createElement(\"div\", { className: \"choice-result-bar\", style: { width: barWidth + \"%\" } })\n            ),\n            _react2.default.createElement(\n                \"div\",\n                { className: \"choice-result-count\" },\n                props.choice.voteSum\n            )\n        );\n    } else {\n        return _react2.default.createElement(\n            \"li\",\n            { className: \"choice-container\" },\n            _react2.default.createElement(\n                \"div\",\n                { className: \"choice-name\" },\n                props.choice.name\n            ),\n            _react2.default.createElement(\n                \"button\",\n                { className: \"choice-vote-button\" },\n                \"Vote\"\n            )\n        );\n    }\n}\n\n//# sourceURL=webpack:///./src/components/choice.js?");
+
+/***/ }),
+
 /***/ "./src/components/create-user-page.js":
 /*!********************************************!*\
   !*** ./src/components/create-user-page.js ***!
@@ -999,7 +1011,7 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.default = Poll;\n\nvar _react = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nvar _react2 = _interopRequireDefault(_react);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction Poll(props) {\n    var choiceItems = props.poll.choices.map(function (choice) {\n        return _react2.default.createElement(\n            \"li\",\n            { key: choice._id, className: \"poll-choice\" },\n            choice.name\n        );\n    });\n    return _react2.default.createElement(\n        \"div\",\n        { className: \"poll\" },\n        _react2.default.createElement(\n            \"h2\",\n            { className: \"poll-question\" },\n            props.poll.question\n        ),\n        _react2.default.createElement(\n            \"ul\",\n            { className: \"poll-choices\" },\n            choiceItems\n        )\n    );\n}\n\n//# sourceURL=webpack:///./src/components/poll.js?");
+eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.default = Poll;\n\nvar _react = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n\nvar _react2 = _interopRequireDefault(_react);\n\nvar _choice = __webpack_require__(/*! ./choice */ \"./src/components/choice.js\");\n\nvar _choice2 = _interopRequireDefault(_choice);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nfunction Poll(props) {\n    var choiceItems = props.poll.choices.map(function (choice) {\n        return _react2.default.createElement(_choice2.default, { key: choice._id,\n            choice: choice,\n            totalVotes: props.poll.totalVotes,\n            showResults: true });\n    });\n    return _react2.default.createElement(\n        'div',\n        { className: 'poll' },\n        _react2.default.createElement(\n            'h2',\n            { className: 'poll-question' },\n            props.poll.question\n        ),\n        _react2.default.createElement(\n            'ul',\n            { className: 'poll-choices' },\n            choiceItems\n        )\n    );\n}\n\n//# sourceURL=webpack:///./src/components/poll.js?");
 
 /***/ }),
 

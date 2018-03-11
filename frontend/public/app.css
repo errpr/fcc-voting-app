@@ -81,8 +81,49 @@ button, a {
     text-decoration: none;
 }
 
+.hot-polls {
+    width: 100%;
+}
+
 .login-input {
     border-bottom: 1px solid black;
     padding: 0.5em;
     margin: 0.5em;
+}
+
+.poll {
+    width: 100%;
+    padding: 1em;
+}
+
+.poll
+
+.choice-container {
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100%;
+    padding: 0.5em;
+    align-items: center;
+}
+
+.choice-name {
+    flex-grow: 1;
+}
+
+.choice-result-count {
+    flex-grow: 0;
+}
+
+.choice-vote-button {
+    flex-grow: 0;
+}
+
+.choice-result-bar-container {
+    flex-grow: 3;
+    height: 2em;
+}
+
+.choice-result-bar {
+    height: 100%;
+    background-color: #2a40e1;
 }
