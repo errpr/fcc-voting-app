@@ -219,14 +219,16 @@ app.post("/api/polls", (req, res) => {
     Poll.create({
         question: req.body.question,
         choices: req.body.choices,
-        votes: [],
         owner: req.session.user
     }, function(error, poll) {
         if(error) {
             console.log(error);
+            res.status(400).send("failed");
         }
         console.log(poll);
-        res.send("ok");
+        res.json({
+            id: hashids.encodeHex(poll.id)
+        });
     });
 });
 

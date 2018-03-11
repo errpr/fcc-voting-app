@@ -1,4 +1,5 @@
 import React from 'react';
+import Poll from './poll';
 
 export default class PollPage extends React.Component {
     constructor(props) {

@@ -1,6 +1,9 @@
 import React from 'react';
 
 function mapCountToWidth(count, total) {
+    if(total === 0) {
+        return 50;
+    }
     return ((count * 100) / total);
 }
 

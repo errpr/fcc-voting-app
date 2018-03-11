@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let voteSchema = new Schema({
-    owner: { type: Schema.Types.ObjectId, index: { unique: true} },
+    owner: { type: Schema.Types.ObjectId, index: true },
     ipAddress: { type: String },
     choice: { type: Schema.Types.ObjectId, required: true }
 });
@@ -17,7 +17,7 @@ voteSchema.pre('validate', function(next) {
 
 let choiceSchema = new Schema({
     name: { type: String, required: true },
-    voteSum: { type: Number }
+    voteSum: { type: Number, default: 0 }
 });
 
 let pollSchema = new Schema({
