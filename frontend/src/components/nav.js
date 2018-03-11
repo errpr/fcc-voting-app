@@ -5,7 +5,7 @@ export default function Nav(props) {
     return(
         <div className="nav-container">
             <div className="nav">
-                <img id="nav-logo" src="/checkthis.png" />
+                <Link to="/"><img id="nav-logo" src="/checkthis.png" /></Link>
                 {
                     props.user && 
                     <div>

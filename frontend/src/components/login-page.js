@@ -16,7 +16,7 @@ const LoginPage = (props) => {
             <input className="login-input" name="password" type="password" id="password-input" />
             <div className="spacer"></div>
             <button id="login-submit-button" className="big-button" onClick={props.login}>Submit</button>
-            <Link to='/user/create'>New user? Click here</Link>
+            <Link to='/users/create'>New user? Click here</Link>
         </div>
     )
 }

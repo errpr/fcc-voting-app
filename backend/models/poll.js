@@ -34,7 +34,8 @@ let pollSchema = new Schema({
     },
     votes: { type: [voteSchema] },
     owner: { type: Schema.Types.ObjectId, required: true, index: true },
-    modifiedDate: { type: Date }
+    modifiedDate: { type: Date },
+    totalVotes: { type: Number, default: 0 }
 });
 
 pollSchema.pre('save', function(next) {
@@ -43,6 +44,7 @@ pollSchema.pre('save', function(next) {
         poll.choices.forEach(function(choice) {
             choice.voteSum = poll.votes.filter(vote => vote.choice == choice.id).length;
         });
+        poll.totalVotes = poll.votes.length;
     }
     this.modifiedDate = Date.now();
     next();

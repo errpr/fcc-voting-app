@@ -121,14 +121,15 @@ app.get("/api/users/:id/polls", (req, res) => {
     let user_id = hashids.decodeHex(req.params.id);
     Poll.find({owner: user_id})
         .sort({ modifiedDate: -1 })
-        .select({question: 1, choices: 1})
+        .select({question: 1, choices: 1, totalVotes: 1})
         .then(polls => {
             console.log(polls[0].question);
             console.log(polls[0].choices);
             let data = polls.map(poll => { return {
                 id: hashids.encodeHex(poll.id),
                 question: poll.question,
-                choices: poll.choices
+                choices: poll.choices,
+                totalVotes: poll.totalVotes
             } });
             res.json(data);
         }).catch(error => console.log(error));
@@ -139,13 +140,14 @@ app.get("/api/polls/hot", (req, res) => {
     Poll.find({})
         .sort({ modifiedDate: -1 })
         .limit(10)
-        .select({question: 1, choices: 1, owner: 1})
+        .select({question: 1, choices: 1, owner: 1, totalVotes: 1})
         .then(polls => {
             let data = polls.map(poll => {
                 return {
                     id: hashids.encodeHex(poll.id),
                     question: poll.question,
-                    choices: poll.choices
+                    choices: poll.choices,
+                    totalVotes: poll.totalVotes
                 }
             });
             res.json(data);
@@ -158,9 +160,15 @@ app.get("/api/polls/:id", (req, res) => {
     Poll.findById(poll_id, function(error, poll) {
         if(error) {
             console.log(error);
+            res.status(400).send("failed");
         }
         console.log(poll);
-        res.send("ok");
+        res.json({
+            id: hashids.encodeHex(poll.id),
+            question: poll.question,
+            choices: poll.choices,
+            totalVotes: poll.totalVotes
+        });
     });
 });
 

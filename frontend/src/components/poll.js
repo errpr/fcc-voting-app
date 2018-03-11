@@ -1,4 +1,5 @@
 import React from 'react';
+import Choice from './choice';
 
 export default function Poll(props) {
     let choiceItems = props.poll.choices.map(choice => <li key={choice._id} className="poll-choice">{choice.name}</li>);
