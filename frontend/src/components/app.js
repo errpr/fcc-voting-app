@@ -1,7 +1,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import Nav from './nav.js';
-import Body from './body.js';
+import Nav from './nav';
+import Body from './body';
+import Footer from './footer';
 
 class App extends React.Component {
     constructor(props) {
@@ -64,11 +65,14 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="app">
+                <div className="white-bg">
                 <Nav user={this.state.user} logout={this.logout} />
                 <Body login={this.login} 
                       create={this.create}
                       user={this.state.user} />
+                </div>
+                <Footer />
             </div>
         );
     }

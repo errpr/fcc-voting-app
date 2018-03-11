@@ -7,6 +7,10 @@
     border: 0;
 }
 
+body {
+    background-color: #333;
+}
+
 h1 {
     font-size: 200%;
 }
@@ -21,6 +25,12 @@ h3 {
 
 button, a {
     cursor: pointer;
+    color: black;
+}
+
+.white-bg {
+    background-color: white;
+    box-shadow: 0px 5px 8px #111;
 }
 
 .spacer {
@@ -30,17 +40,19 @@ button, a {
 
 .body-container {
     width: 100%;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 1em;
+    margin-top: 2em;
+    min-height: 50vh;
 }
 
 .body {
     width: 100%;
+    min-height: 40vh;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-flow: column nowrap;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }
 
@@ -126,4 +138,9 @@ button, a {
 .choice-result-bar {
     height: 100%;
     background-color: #2a40e1;
+}
+
+.footer {
+    padding: 2em;
+    text-align: center;
 }
