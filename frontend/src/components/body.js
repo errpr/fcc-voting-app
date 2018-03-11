@@ -8,12 +8,14 @@ import PollPage from './poll-page';
 
 export default function Body(props) {
     return(
-        <Switch>
-            <Route exact path="/" render={(props2) => <FrontPage {...props2} />} />
-            <Route exact path="/login" render={() => <LoginPage user={props.user} login={props.login} />} />
-            <Route exact path="/user/create" render={() => <CreateUserPage user={props.user} create={props.create} />} />
-            <Route path="/users/:id" render={(props2) => <UserPage user={props.user} {...props2} />} />
-            <Route path="/polls/:id" render={(props2) => <PollPage user={props.user} {...props2} />} />
-        </Switch>
+        <div className="body-container">
+            <Switch>
+                <Route exact path="/" render={(props2) => <FrontPage {...props2} />} />
+                <Route exact path="/login" render={() => <LoginPage user={props.user} login={props.login} />} />
+                <Route exact path="/user/create" render={() => <CreateUserPage user={props.user} create={props.create} />} />
+                <Route path="/users/:id" render={(props2) => <UserPage user={props.user} {...props2} />} />
+                <Route path="/polls/:id" render={(props2) => <PollPage user={props.user} {...props2} />} />
+            </Switch>
+        </div>
     );
 }

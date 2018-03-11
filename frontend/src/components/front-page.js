@@ -24,8 +24,10 @@ export default class FrontPage extends React.Component {
             polls = this.state.hotPolls.map(poll => <Poll key={poll.id} poll={poll} />)
         }
         return(
-            <div>
-                Front Page
+            <div className="body">
+                <Link id="create-poll-button" to="/polls/create">Create a Poll</Link>
+                <div className="spacer"></div>
+                <h1>Current Polls</h1>
                 <div className="hot-polls">
                     {polls}
                 </div>
