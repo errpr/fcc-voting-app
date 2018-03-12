@@ -47,7 +47,7 @@ export default class CreatePollPage extends React.Component {
     }
 
     render() {
-        if(!this.props.user) {
+        if(!this.props.user && this.props.hasAttemptedLogin) {
             return(<Redirect to="/login" />)
         }
 

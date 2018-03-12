@@ -9,7 +9,8 @@ class App extends React.Component {
         super(props);
         console.log(props);
         this.state = {
-            user: null
+            user: null,
+            hasAttemptedLogin: false
         }
 
         this.login = (_e) => {
@@ -54,7 +55,7 @@ class App extends React.Component {
         fetch("/api/login", {
             method: "GET",
             credentials: "same-origin"
-        }).then(response => response.ok ? response.json() : null).then(json => this.setState({ user: json }));
+        }).then(response => response.ok ? response.json() : null).then(json => this.setState({ user: json, hasAttemptedLogin: true }));
     }
 
     componentDidMount() {
@@ -70,7 +71,8 @@ class App extends React.Component {
                 <Nav user={this.state.user} logout={this.logout} />
                 <Body login={this.login} 
                       create={this.create}
-                      user={this.state.user} />
+                      user={this.state.user}
+                      hasAttemptedLogin={this.state.hasAttemptedLogin} />
                 </div>
                 <Footer />
             </div>

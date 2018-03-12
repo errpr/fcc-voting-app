@@ -52,8 +52,9 @@ pollSchema.pre('save', function(next) {
     next();
 });
 
-pollSchema.methods.frontendFormatted = function() {
-    return {
+pollSchema.methods.frontendFormatted = function(user_id = null) {
+    console.log("user_id: " + user_id);
+    let response = {
         id: hashids.encodeHex(this.id),
         question: this.question,
         choices: this.choices,
@@ -63,6 +64,18 @@ pollSchema.methods.frontendFormatted = function() {
             ownerName: this.ownerName,
         }
     }
+    if(user_id) {
+        console.log("user_id: " + user_id);
+        let hasVoted = this.votes.find(vote => vote.owner == user_id);
+        console.log("hasVoted: " + JSON.stringify(hasVoted, null, 2));
+        if(hasVoted) {
+            response.hasVoted = true;
+        } else {
+            response.hasVoted = false;
+        }
+    }
+    console.log("Poll response: " + JSON.stringify(response, null, 2));
+    return response;
 }
 
 module.exports = mongoose.model("Poll", pollSchema);

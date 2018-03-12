@@ -12,11 +12,23 @@ export default function Body(props) {
         <div className="body-container">
             <Switch>
                 <Route exact path="/" render={(props2) => <FrontPage {...props2} />} />
-                <Route exact path="/login" render={() => <LoginPage user={props.user} login={props.login} />} />
-                <Route exact path="/users/create" render={() => <CreateUserPage user={props.user} create={props.create} />} />
-                <Route exact path="/polls/create" render={(props2) => <CreatePollPage user={props.user} {...props2} /> } />
-                <Route path="/users/:id" render={(props2) => <UserPage user={props.user} {...props2} />} />
-                <Route path="/polls/:id" render={(props2) => <PollPage user={props.user} {...props2} />} />
+                <Route exact path="/login" render={() => <LoginPage
+                                                            user={props.user} 
+                                                            login={props.login} />} />
+                <Route exact path="/users/create" render={() => <CreateUserPage
+                                                                    user={props.user} 
+                                                                    create={props.create} />} />
+                <Route exact path="/polls/create" render={(props2) => <CreatePollPage 
+                                                                        hasAttemptedLogin={props.hasAttemptedLogin} 
+                                                                        user={props.user} 
+                                                                        {...props2} /> } />
+                <Route path="/users/:id" render={(props2) => <UserPage 
+                                                                user={props.user} 
+                                                                {...props2} />} />
+                <Route path="/polls/:id" render={(props2) => <PollPage 
+                                                                hasAttemptedLogin={props.hasAttemptedLogin} 
+                                                                user={props.user} 
+                                                                {...props2} />} />
             </Switch>
         </div>
     );

@@ -22,11 +22,21 @@ export default class PollPage extends React.Component {
         }
     }
 
-    componentDidMount() {
-        let { id } = this.props.match.params;
-        fetch(`/api/polls/${id}`)
+    fetchAfterSessionLoginAttempt() {
+        if(this.props.hasAttemptedLogin) {
+            let { id } = this.props.match.params;
+            fetch(`/api/polls/${id}`, {
+                credentials: "same-origin"
+            })
             .then(response => response.ok ? response.json() : null)
             .then(json => this.setState({ poll: json }));
+        } else {
+            setTimeout(this.fetchAfterSessionLoginAttempt.bind(this), 100);
+        }
+    }
+
+    componentDidMount() {
+        this.fetchAfterSessionLoginAttempt();
     }
 
     render() {

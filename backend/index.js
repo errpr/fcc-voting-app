@@ -25,6 +25,8 @@ app.use(session({
 
 // login with previous session
 app.get('/api/login', (req, res) => {
+    console.log("login: " + JSON.stringify(req.session));
+    console.log("login: " + JSON.stringify(req.session.user));
     if(req.session && req.session.user) {
         User.findById(req.session.user, function(error, user) {
             if(error) {
@@ -141,6 +143,12 @@ app.get("/api/polls/hot", (req, res) => {
 
 // get specific poll
 app.get("/api/polls/:id", (req, res) => {
+    let user_id = null;
+    if(req.session) {
+        console.log("session: " + JSON.stringify(req.session, null, 2));
+        user_id = req.session.user;
+        console.log("user_id: " + user_id);
+    }
     let poll_id = hashids.decodeHex(req.params.id);
     Poll.findById(poll_id, function(error, poll) {
         if(error) {
@@ -148,7 +156,7 @@ app.get("/api/polls/:id", (req, res) => {
             res.status(400).send("failed");
         }
         console.log(poll.question);
-        res.json(poll.frontendFormatted());
+        res.json(poll.frontendFormatted(user_id));
     });
 });
 
