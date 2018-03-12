@@ -124,14 +124,7 @@ app.get("/api/users/:id/polls", (req, res) => {
         .select({question: 1, choices: 1, totalVotes: 1})
         .then(polls => {
             console.log(polls[0].question);
-            console.log(polls[0].choices);
-            let data = polls.map(poll => { return {
-                id: hashids.encodeHex(poll.id),
-                question: poll.question,
-                choices: poll.choices,
-                totalVotes: poll.totalVotes
-            } });
-            res.json(data);
+            res.json(polls.map(poll => poll.frontendFormatted()));
         }).catch(error => console.log(error));
 });
 
@@ -142,15 +135,7 @@ app.get("/api/polls/hot", (req, res) => {
         .limit(10)
         .select({question: 1, choices: 1, owner: 1, totalVotes: 1})
         .then(polls => {
-            let data = polls.map(poll => {
-                return {
-                    id: hashids.encodeHex(poll.id),
-                    question: poll.question,
-                    choices: poll.choices,
-                    totalVotes: poll.totalVotes
-                }
-            });
-            res.json(data);
+            res.json(polls.map(poll => poll.frontendFormatted()));
         }).catch(error => console.log(error));
 })
 
@@ -162,13 +147,8 @@ app.get("/api/polls/:id", (req, res) => {
             console.log(error);
             res.status(400).send("failed");
         }
-        console.log(poll);
-        res.json({
-            id: hashids.encodeHex(poll.id),
-            question: poll.question,
-            choices: poll.choices,
-            totalVotes: poll.totalVotes
-        });
+        console.log(poll.question);
+        res.json(poll.frontendFormatted());
     });
 });
 
@@ -195,12 +175,7 @@ app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
                 if(error) {
                     console.log(error);
                 }
-                res.json({
-                    id: hashids.encodeHex(poll.id),
-                    question: poll.question,
-                    choices: poll.choices,
-                    totalVotes: poll.totalVotes
-                });
+                res.json(poll.frontendFormatted());
             });
         } else {
             poll.votes.push({
@@ -212,12 +187,7 @@ app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
                 if(error) {
                     console.log(error);
                 }
-                res.json({
-                    id: hashids.encodeHex(poll.id),
-                    question: poll.question,
-                    choices: poll.choices,
-                    totalVotes: poll.totalVotes
-                });
+                res.json(poll.frontendFormatted());
             });
         }
     });
@@ -229,21 +199,21 @@ app.post("/api/polls", (req, res) => {
     Poll.create({
         question: req.body.question,
         choices: req.body.choices,
-        owner: req.session.user
+        owner: req.session.user,
+        ownerName: req.session.user.name,
     }, function(error, poll) {
         if(error) {
             console.log(error);
             res.status(400).send("failed");
         }
         console.log(poll);
-        res.json({
-            id: hashids.encodeHex(poll.id)
-        });
+        res.json(poll.frontendFormatted());
     });
 });
 
+// don't send html to bad api requests
 app.all("/api/*", (req, res) => {
-    res.status("400").send("failed");
+    res.status(404).send("failed");
 });
 
 // send react app

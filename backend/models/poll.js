@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const hashids = new (require('hashids'))(process.env.HASH_SALT);
 const Schema = mongoose.Schema;
 
 let voteSchema = new Schema({
@@ -34,6 +35,7 @@ let pollSchema = new Schema({
     },
     votes: { type: [voteSchema] },
     owner: { type: Schema.Types.ObjectId, required: true, index: true },
+    ownerName: { type: String, required: true },
     modifiedDate: { type: Date },
     totalVotes: { type: Number, default: 0 }
 });
@@ -49,5 +51,18 @@ pollSchema.pre('save', function(next) {
     this.modifiedDate = Date.now();
     next();
 });
+
+pollSchema.methods.frontendFormatted = function() {
+    return {
+        id: hashids.encodeHex(this.id),
+        question: this.question,
+        choices: this.choices,
+        totalVotes: this.totalVotes,
+        owner: {
+            id: hashids.encodeHex(this.owner),
+            ownerName: this.ownerName,
+        }
+    }
+}
 
 module.exports = mongoose.model("Poll", pollSchema);
