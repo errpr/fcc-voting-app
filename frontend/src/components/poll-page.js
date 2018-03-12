@@ -20,6 +20,14 @@ export default class PollPage extends React.Component {
             }).then(response => response.ok ? response.json() : this.state.poll)
             .then(json => this.setState({ poll: json, showResults: true }));
         }
+
+        this.showResults = (_e) => {
+            this.setState({showResults: true});
+        }
+
+        this.showVoteButtons = (_e) => {
+            this.setState({showResults: false});
+        }
     }
 
     fetchAfterSessionLoginAttempt() {
@@ -29,7 +37,7 @@ export default class PollPage extends React.Component {
                 credentials: "same-origin"
             })
             .then(response => response.ok ? response.json() : null)
-            .then(json => this.setState({ poll: json }));
+            .then(json => json && this.setState({ poll: json, showResults: json.hasVoted }))
         } else {
             setTimeout(this.fetchAfterSessionLoginAttempt.bind(this), 100);
         }
@@ -46,6 +54,16 @@ export default class PollPage extends React.Component {
                     <Poll poll={this.state.poll} 
                           showResults={this.state.showResults}
                           handleVote={this.handleVote} />
+                }
+                {   this.state.poll          && 
+                    this.state.showResults   && 
+                    <button onClick={this.showVoteButtons} className="big-button">
+                        {this.state.hasVoted ? "Change My Vote" : "Place My Vote"}
+                    </button> 
+                }
+                {   this.state.poll         && 
+                    !this.state.showResults && 
+                    <button onClick={this.showResults} className="big-button">Show Results</button>
                 }
             </div>
         );

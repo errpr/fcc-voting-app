@@ -6,15 +6,26 @@ export default class UserPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            userPolls: null
+            userPolls: null,
+            user: null
+        }
+    }
+
+    fetchAfterSessionLoginAttempt() {
+        if(this.props.hasAttemptedLogin) {
+            const { id } = this.props.match.params;
+            fetch(`/api/users/${id}/polls`,{
+                credentials: "same-origin",
+            })
+            .then(response => response.ok ? response.json() : null)
+            .then(json => json && this.setState({ userPolls: json.polls, user: json.user }));
+        } else {
+            setTimeout(this.fetchAfterSessionLoginAttempt.bind(this), 100);
         }
     }
 
     componentDidMount () {
-        const { id } = this.props.match.params;
-        fetch(`/api/users/${id}/polls`)
-        .then(response => response.ok ? response.json() : null)
-        .then(json => this.setState({ userPolls: json }));
+        this.fetchAfterSessionLoginAttempt();
     }
 
     render() {
@@ -25,7 +36,10 @@ export default class UserPage extends React.Component {
         return(
             <div className="user-page">
                 <h1 className="user-page-title">
-                    This Dudes Polls
+                    {this.state.user &&
+                     (this.state.user.id === this.props.user.id ? 
+                      "Your polls:" :
+                      `${this.state.user.name}'s polls:`)}
                 </h1>
                 <div className="user-page-polls">
                     {polls}

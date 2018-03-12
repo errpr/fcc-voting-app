@@ -53,7 +53,6 @@ pollSchema.pre('save', function(next) {
 });
 
 pollSchema.methods.frontendFormatted = function(user_id = null) {
-    console.log("user_id: " + user_id);
     let response = {
         id: hashids.encodeHex(this.id),
         question: this.question,
@@ -61,20 +60,17 @@ pollSchema.methods.frontendFormatted = function(user_id = null) {
         totalVotes: this.totalVotes,
         owner: {
             id: hashids.encodeHex(this.owner),
-            ownerName: this.ownerName,
+            name: this.ownerName,
         }
     }
     if(user_id) {
-        console.log("user_id: " + user_id);
         let hasVoted = this.votes.find(vote => vote.owner == user_id);
-        console.log("hasVoted: " + JSON.stringify(hasVoted, null, 2));
         if(hasVoted) {
             response.hasVoted = true;
         } else {
             response.hasVoted = false;
         }
     }
-    console.log("Poll response: " + JSON.stringify(response, null, 2));
     return response;
 }
 

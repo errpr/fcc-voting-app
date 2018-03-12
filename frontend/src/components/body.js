@@ -23,7 +23,8 @@ export default function Body(props) {
                                                                         user={props.user} 
                                                                         {...props2} /> } />
                 <Route path="/users/:id" render={(props2) => <UserPage 
-                                                                user={props.user} 
+                                                                user={props.user}
+                                                                hasAttemptedLogin={props.hasAttemptedLogin} 
                                                                 {...props2} />} />
                 <Route path="/polls/:id" render={(props2) => <PollPage 
                                                                 hasAttemptedLogin={props.hasAttemptedLogin} 
