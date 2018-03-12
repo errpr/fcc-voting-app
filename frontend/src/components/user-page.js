@@ -1,5 +1,5 @@
 import React from 'react';
-import Poll from './poll';
+import MiniPoll from './mini-poll';
 import { Link } from 'react-router-dom';
 
 export default class UserPage extends React.Component {
@@ -20,7 +20,7 @@ export default class UserPage extends React.Component {
     render() {
         let polls = "No polls";
         if(this.state.userPolls) {
-            polls = this.state.userPolls.map(poll => <Poll key={poll.id} poll={poll} />);
+            polls = this.state.userPolls.map(poll => <MiniPoll key={poll.id} poll={poll} />);
         }
         return(
             <div className="user-page">

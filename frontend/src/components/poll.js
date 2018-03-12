@@ -5,7 +5,8 @@ export default function Poll(props) {
     let choiceItems = props.poll.choices.map(choice => <Choice key={choice._id} 
                                                                 choice={choice} 
                                                                 totalVotes={props.poll.totalVotes}
-                                                                showResults={true} />);
+                                                                showResults={props.showResults}
+                                                                handleVote={props.handleVote} />);
     return(
         <div className="poll">
             <h2 className="poll-question">{props.poll.question}</h2>

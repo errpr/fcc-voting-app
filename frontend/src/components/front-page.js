@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Poll from './poll';
+import MiniPoll from './mini-poll';
 
 export default class FrontPage extends React.Component {
     constructor(props) {
@@ -21,7 +21,7 @@ export default class FrontPage extends React.Component {
     render() {
         let polls;
         if(this.state.hotPolls) {
-            polls = this.state.hotPolls.map(poll => <Poll key={poll.id} poll={poll} />)
+            polls = this.state.hotPolls.map(poll => <MiniPoll key={poll.id} poll={poll} />)
         }
         return(
             <div className="body">

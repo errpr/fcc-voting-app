@@ -6,7 +6,19 @@ export default class PollPage extends React.Component {
         super(props);
         this.state = {
             whatup: "hey",
-            poll: null
+            poll: null,
+            showResults: false
+        }
+
+        this.handleVote = (e) => {
+            fetch(`/api/polls/${this.state.poll.id}/vote/${e.target.getAttribute("data-choice-id")}`, {
+                method: "POST",
+                headers: {
+                    "Content-Length": 0,
+                },
+                credentials: "same-origin"
+            }).then(response => response.ok ? response.json() : this.state.poll)
+            .then(json => this.setState({ poll: json, showResults: true }));
         }
     }
 
@@ -19,9 +31,11 @@ export default class PollPage extends React.Component {
 
     render() {
         return(
-            <div className="poll-page">
+            <div className="body">
                 { this.state.poll &&
-                    <Poll poll={this.state.poll} />
+                    <Poll poll={this.state.poll} 
+                          showResults={this.state.showResults}
+                          handleVote={this.handleVote} />
                 }
             </div>
         );

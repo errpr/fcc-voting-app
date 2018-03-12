@@ -173,7 +173,7 @@ app.get("/api/polls/:id", (req, res) => {
 });
 
 // vote for a choice
-app.put("/api/polls/:id/vote/:choice_id", (req, res) => {
+app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
     let poll_id = hashids.decodeHex(req.params.id);
     let choice_id = req.params.choice_id;
     console.log(req.session.user);
@@ -195,7 +195,12 @@ app.put("/api/polls/:id/vote/:choice_id", (req, res) => {
                 if(error) {
                     console.log(error);
                 }
-                res.send("ok");
+                res.json({
+                    id: hashids.encodeHex(poll.id),
+                    question: poll.question,
+                    choices: poll.choices,
+                    totalVotes: poll.totalVotes
+                });
             });
         } else {
             poll.votes.push({
@@ -207,7 +212,12 @@ app.put("/api/polls/:id/vote/:choice_id", (req, res) => {
                 if(error) {
                     console.log(error);
                 }
-                res.send("ok");
+                res.json({
+                    id: hashids.encodeHex(poll.id),
+                    question: poll.question,
+                    choices: poll.choices,
+                    totalVotes: poll.totalVotes
+                });
             });
         }
     });

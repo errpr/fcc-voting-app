@@ -26,6 +26,7 @@ h3 {
 button, a {
     cursor: pointer;
     color: black;
+    text-decoration: none;
 }
 
 .white-bg {
@@ -117,8 +118,6 @@ button, a {
     width: 100%;
     padding: 1em;
 }
-
-.poll
 
 .choice-container {
     display: flex;
