@@ -8,7 +8,7 @@
 }
 
 body {
-    background-color: #444;
+    background-color: #4A4A4A;
 }
 
 h1 {
@@ -29,6 +29,8 @@ h3 {
 button, a {
     cursor: pointer;
     color: black;
+    font-size: inherit;
+    background-color: inherit;
 }
 
 .white-bg {
@@ -178,7 +180,6 @@ button, a {
 }
 
 a.poll-owner-link {
-    font-size: inherit;
     text-decoration: underline;
 }
 

@@ -34,16 +34,14 @@ export default class UserPage extends React.Component {
             polls = this.state.userPolls.map(poll => <MiniPoll key={poll.id} poll={poll} />);
         }
         return(
-            <div className="user-page">
+            <div className="body">
                 <h1 className="user-page-title">
                     {this.state.user &&
                      (this.state.user.id === this.props.user.id ? 
                       "Your polls:" :
                       `${this.state.user.name}'s polls:`)}
                 </h1>
-                <div className="user-page-polls">
-                    {polls}
-                </div>
+                {polls}
             </div>
         )
     }

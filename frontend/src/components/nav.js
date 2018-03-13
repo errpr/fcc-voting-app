@@ -9,7 +9,7 @@ export default function Nav(props) {
                 {
                     props.user && 
                     <div>
-                        <h3>Welcome, {props.user.name}</h3>
+                        <h3>Welcome, <Link to={"/users/" + props.user.id}>{props.user.name}</Link></h3>
                         <button id="log-out-button" onClick={props.logout}>Log out.</button>
                     </div>
                 }

@@ -11,8 +11,8 @@ export default function MiniPoll(props) {
         mutedChoices = choices.length - displayedChoices.length;
     }
     return(
-        <Link to={`/polls/${props.poll.id}`}>
-            <div className="poll">
+        <div className="poll">
+            <Link to={`/polls/${props.poll.id}`}>
                 <h2 className="mini-poll poll-question">{props.poll.question}</h2>
                 <ul className="poll-choices">
                     {displayedChoices.map((choice, i) => 
@@ -22,7 +22,7 @@ export default function MiniPoll(props) {
                                 totalVotes={props.poll.totalVotes} />)}
                 </ul>
                 {mutedChoices > 0 && <p className="subtext"> ... And {mutedChoices} more choices.</p>}
-            </div>
-        </Link>
+            </Link>
+        </div>
     );
 }

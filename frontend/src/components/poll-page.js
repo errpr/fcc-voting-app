@@ -58,7 +58,7 @@ export default class PollPage extends React.Component {
                 {   this.state.poll          && 
                     this.state.showResults   && 
                     <button onClick={this.showVoteButtons} className="big-button">
-                        {this.state.hasVoted ? "Change My Vote" : "Place My Vote"}
+                        {this.state.poll.hasVoted ? "Change My Vote" : "Place My Vote"}
                     </button> 
                 }
                 {   this.state.poll         && 
