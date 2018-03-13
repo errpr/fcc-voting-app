@@ -70,6 +70,7 @@ app.post('/api/login', (req, res) => {
         }
 
         req.session.user = user.id;
+        req.session.username = user.username;
         req.session.cookie.username = user.username;
         res.json({
             name: user.username,
@@ -130,6 +131,11 @@ app.get("/api/users/:id/polls", (req, res) => {
             return;
         }
 
+        if(!user) {
+            res.status(404).send("not found");
+            return;
+        }
+
         Poll.find({owner: user.id})
         .sort({ modifiedDate: -1 })
         .then(polls => {
@@ -170,7 +176,14 @@ app.get("/api/polls/:id", (req, res) => {
         if(error) {
             console.log(error);
             res.status(400).send("failed");
+            return;
         }
+
+        if(!poll) {
+            res.status(404).send("Not found");
+            return;
+        }
+
         res.json(poll.frontendFormatted(user_id));
     }).catch(error => { console.log(error2); res.status(503).send("failed") });
 });
@@ -270,6 +283,31 @@ app.put("/api/polls/:id", (req, res) => {
     });
 });
 
+app.delete("/api/polls/:id", (req, res) => {
+    let user_id = null;
+    if(req.session) {
+        user_id = req.session.user;
+    } else {
+        res.status(403).send("Must log in to delete a poll");
+        return;
+    }
+    let pollId = hashids.decodeHex(req.params.id);
+    Poll.findById(pollId, function(error, poll) {
+        if(error) {
+            console.log(error);
+            res.status(400).send("failed");
+            return;
+        }
+        if(poll.owner == user_id) {
+            poll.remove();
+            res.json({id: hashids.encodeHex(pollId), deleted: true});
+        } else {
+            res.status(403).send("You do not control this poll.");
+            return;
+        }
+    });
+});
+
 // create new poll
 app.post("/api/polls", (req, res) => {
     let user_id = null;
@@ -283,7 +321,7 @@ app.post("/api/polls", (req, res) => {
         question: req.body.question,
         choices: req.body.choices,
         owner: req.session.user,
-        ownerName: req.session.user.name,
+        ownerName: req.session.username,
     }, function(error, poll) {
         if(error) {
             console.log(error);

@@ -53,11 +53,25 @@ export default class EditPollPage extends React.Component {
                 })
             }).then(response => response.ok ? response.json() : null)
             .then(json => {
-                this.props.updatePollStorage(json);
-                this.setState({ pollRedirect: true });
+                if(json) {
+                    this.props.updatePollStorage(json);
+                    this.setState({ pollRedirect: "/polls/" + json.id });
+                }
             });
         }
 
+        this.deletePoll = (_e) => {
+            fetch(`/api/polls/${this.state.id}`, { 
+                method: "DELETE",
+                credentials: "same-origin",
+            }).then(response => response.ok ? response.json() : null)
+            .then(json => {
+                if(json) {
+                    this.props.updatePollStorage(json);
+                    this.setState({ pollRedirect: "/" });
+                }
+            });
+        }
     }
 
     updateLocalState(poll) {
@@ -84,7 +98,7 @@ export default class EditPollPage extends React.Component {
         }
 
         if(this.state.pollRedirect) {
-            return(<Redirect to={`/polls/${this.state.id}`} />)
+            return(<Redirect to={this.state.pollRedirect} />)
         }
 
         const choiceInputs = this.state
@@ -100,14 +114,16 @@ export default class EditPollPage extends React.Component {
         return(
             <div className="body">
                 <h1>Edit Poll</h1>
-                
                 <label htmlFor="question">Question</label>
                 <input type="text" className="create-poll-input" name="question" onChange={this.handleChangeQ} value={this.state.question} />
                 <div className="spacer"></div>
                 <label>Choices <button className="small-button" onClick={this.addChoice}>+</button></label>
                 {choiceInputs}
                 <p className="subtext">Note: changing a poll option will delete the votes for that choice.</p>
-                <button className="big-button" onClick={this.handleSubmit}>Submit</button>
+                <div>
+                    <button className="big-button" onClick={this.handleSubmit}>Submit</button>
+                    <button className="big-button danger-button" onClick={this.deletePoll}>Delete Poll</button>
+                </div>
             </div>
         )
     }

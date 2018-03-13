@@ -18,11 +18,15 @@ export default class FrontPage extends React.Component {
     render() {
         let storage = this.props.pollStorage;
         let allPolls = [];
+
         for(let poll in storage) {
             if(storage.hasOwnProperty(poll)) {
-                allPolls.push(storage[poll]); // probably some way to sort during this loop but eh..
+                if(!storage[poll].deleted) {
+                    allPolls.push(storage[poll]);
+                }
             }
         }
+
         if(!(allPolls.length > 0)) {
             return(<div className="body">Loading</div>);
         }

@@ -39,7 +39,9 @@ export default class UserPage extends React.Component {
         for(let pollId in storage) {
             if(storage.hasOwnProperty(pollId)) {
                 if(storage[pollId].owner.id == this.state.userId) {
-                    userPolls.push(storage[pollId]);
+                    if(!storage[pollId].deleted) {
+                        userPolls.push(storage[pollId]);
+                    }
                 }
             }
         }
@@ -58,7 +60,7 @@ export default class UserPage extends React.Component {
         } else if (this.state.user) {
             headerstring = this.state.user.name + "'s polls:";
         }
-        
+
         return(
             <div className="body">
                 <h1 className="user-page-title">

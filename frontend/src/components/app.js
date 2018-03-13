@@ -7,7 +7,6 @@ import Footer from './footer';
 class App extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props);
         this.state = {
             user: null,
             hasAttemptedLogin: false,
@@ -55,10 +54,22 @@ class App extends React.Component {
             let newPolls = this.state.pollStorage;
             if(Array.isArray(polls)) {
                 for(let i in polls) {
+                    let oldPoll = newPolls[polls[i].id];
+                    if(oldPoll && oldPoll.deleted) {
+                        continue;
+                    }
                     newPolls[polls[i].id] = polls[i];
                 }
-            } else if(Object.prototype.toString.call(polls) === '[object Object]') { // we javascripting
-                newPolls[polls.id] = polls;
+            } else if(Object.prototype.toString.call(polls) === '[object Object]') {
+                let oldPoll = newPolls[polls.id];
+                if(oldPoll && oldPoll.deleted) {
+                    return;
+                }
+                if(polls.deleted) {
+                    newPolls[polls.id].deleted = true;
+                } else {
+                    newPolls[polls.id] = polls;
+                }
             } else {
                 return;
             }

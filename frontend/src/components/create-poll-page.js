@@ -76,6 +76,6 @@ export default class CreatePollPage extends React.Component {
                 <div className="spacer"></div>
                 <button className="big-button" onClick={this.handleSubmit}>Submit</button>
             </div>
-        )
+        );
     }
 }

@@ -15,6 +15,9 @@
     "mongoose": "^5.0.9",
     "node": "^9.7.0"
   },
+  "engines" : {
+    "node": "9.7.0"
+  },
   "scripts": {
     "start": "node index.js",
     "default": "start"

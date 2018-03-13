@@ -23,7 +23,10 @@ export default class PollPage extends React.Component {
                 },
                 credentials: "same-origin"
             }).then(response => response.ok ? response.json() : null)
-            .then(json => this.props.updatePollStorage(json));
+            .then(json => { 
+                this.props.updatePollStorage(json);
+                this.setState({showResults: true});
+            });
         }
 
         this.showResults = (_e) => {
@@ -65,26 +68,31 @@ export default class PollPage extends React.Component {
         if(!poll) {
             return(<div className="body">Loading</div>);
         }
+        if(poll.deleted) {
+            return(<div className="body">This poll has been deleted.</div>);
+        }
         return(
             <div className="body">
                 <Poll poll={poll} 
                         showResults={this.state.showResults}
                         handleVote={this.handleVote} />
-                {
-                    this.state.showResults && 
-                    <button onClick={this.showVoteButtons} className="big-button">
-                        {poll.hasVoted ? "Change My Vote" : "Place My Vote"}
-                    </button> 
-                }
-                {
-                    !this.state.showResults && 
-                    <button onClick={this.showResults} className="big-button">Show Results</button>
-                }
-                {
-                    this.props.user &&
-                    this.props.user.id == poll.owner.id &&
-                    <Link className="big-button" to={`/polls/${this.state.pollId}/edit`}>Edit Poll</Link>
-                }
+                <div>
+                    {
+                        this.state.showResults && 
+                        <button onClick={this.showVoteButtons} className="big-button">
+                            {poll.hasVoted ? "Change My Vote" : "Place My Vote"}
+                        </button> 
+                    }
+                    {
+                        !this.state.showResults && 
+                        <button onClick={this.showResults} className="big-button">Show Results</button>
+                    }
+                    {
+                        this.props.user &&
+                        this.props.user.id == poll.owner.id &&
+                        <Link className="big-button" to={`/polls/${this.state.pollId}/edit`}>Edit Poll</Link>
+                    }
+                </div>
             </div>
         );
     }

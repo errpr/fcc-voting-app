@@ -156,6 +156,8 @@ button, a {
 
 .choice-vote-button {
     flex-grow: 0;
+    padding-left: 2em;
+    padding-right: 2em;
 }
 
 .choice-result-bar-container {
@@ -187,6 +189,11 @@ button, a {
 
 a.poll-owner-link {
     text-decoration: underline;
+}
+
+.danger-button {
+    border: 1px solid tomato;
+    color: tomato;
 }
 
 @media (min-width: 500px) {
