@@ -6,8 +6,8 @@ export default class UserPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            userPolls: null,
-            user: null
+            user: null,
+            userId: this.props.match.params.id
         }
     }
 
@@ -18,7 +18,12 @@ export default class UserPage extends React.Component {
                 credentials: "same-origin",
             })
             .then(response => response.ok ? response.json() : null)
-            .then(json => json && this.setState({ userPolls: json.polls, user: json.user }));
+            .then(json => {
+                if(json) {
+                    this.props.updatePollStorage(json.polls);
+                    this.setState({ user: json.user });
+                };
+            });
         } else {
             setTimeout(this.fetchAfterSessionLoginAttempt.bind(this), 100);
         }
@@ -29,20 +34,38 @@ export default class UserPage extends React.Component {
     }
 
     render() {
-        let polls = "No polls";
-        if(this.state.userPolls) {
-            polls = this.state.userPolls.map(poll => <MiniPoll key={poll.id} poll={poll} />);
+        let storage = this.props.pollStorage;
+        let userPolls = [];
+        for(let pollId in storage) {
+            if(storage.hasOwnProperty(pollId)) {
+                if(storage[pollId].owner.id == this.state.userId) {
+                    userPolls.push(storage[pollId]);
+                }
+            }
         }
+        let polls = userPolls.sort((a, b) => (a.modifiedDate > b.modifiedDate) ? -1 : 1)
+                             .map(poll => <MiniPoll key={poll.id} poll={poll} />);
+
+        let headerstring = "User's polls:";
+        if(this.props.user) {
+            if(this.state.user) {
+                if(this.state.user === this.props.user.id) {
+                    headerstring = "Your polls:";
+                } else {
+                    headerstring = this.state.user.name + "'s polls:";
+                }
+            }
+        } else if (this.state.user) {
+            headerstring = this.state.user.name + "'s polls:";
+        }
+        
         return(
             <div className="body">
                 <h1 className="user-page-title">
-                    {this.state.user &&
-                     (this.state.user.id === this.props.user.id ? 
-                      "Your polls:" :
-                      `${this.state.user.name}'s polls:`)}
+                    {headerstring}
                 </h1>
                 {polls}
             </div>
-        )
+        );
     }
 }

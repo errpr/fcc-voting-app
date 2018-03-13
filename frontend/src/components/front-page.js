@@ -5,9 +5,6 @@ import MiniPoll from './mini-poll';
 export default class FrontPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            hotPolls: null
-        }
     }
 
     componentDidMount() {
@@ -15,14 +12,24 @@ export default class FrontPage extends React.Component {
             method: "GET",
             credentials: "same-origin"
         }).then(response => response.ok ? response.json() : null)
-        .then(json => this.setState({ hotPolls: json }));
+        .then(json => this.props.updatePollStorage(json));
     }
 
     render() {
-        let polls;
-        if(this.state.hotPolls) {
-            polls = this.state.hotPolls.map(poll => <MiniPoll key={poll.id} poll={poll} />)
+        let storage = this.props.pollStorage;
+        let allPolls = [];
+        for(let poll in storage) {
+            if(storage.hasOwnProperty(poll)) {
+                allPolls.push(storage[poll]); // probably some way to sort during this loop but eh..
+            }
         }
+        if(!(allPolls.length > 0)) {
+            return(<div className="body">Loading</div>);
+        }
+        let polls = allPolls.sort((a, b) => (a.modifiedDate > b.modifiedDate) ? -1 : 1)
+                            .slice(0, 10)
+                            .map(poll => <MiniPoll key={poll.id} poll={poll} />);
+        
         return(
             <div className="body">
                 <Link className="big-button" id="create-poll-button" to="/polls/create">Create a Poll</Link>
@@ -31,6 +38,6 @@ export default class FrontPage extends React.Component {
                     {polls}
                 </div>
             </div>
-        )
+        );
     }
 }

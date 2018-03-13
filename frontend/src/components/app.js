@@ -10,7 +10,8 @@ class App extends React.Component {
         console.log(props);
         this.state = {
             user: null,
-            hasAttemptedLogin: false
+            hasAttemptedLogin: false,
+            pollStorage: {}
         }
 
         this.login = (_e) => {
@@ -48,7 +49,21 @@ class App extends React.Component {
                 method: "DELETE",
                 credentials: "same-origin"
             }).then(response => response.ok ? this.setState({ user: null }) : console.log("logout failed"));
-        }
+        };
+
+        this.updatePollStorage = (polls) => {
+            let newPolls = this.state.pollStorage;
+            if(Array.isArray(polls)) {
+                for(let i in polls) {
+                    newPolls[polls[i].id] = polls[i];
+                }
+            } else if(Object.prototype.toString.call(polls) === '[object Object]') { // we javascripting
+                newPolls[polls.id] = polls;
+            } else {
+                return;
+            }
+            this.setState({ pollStorage: newPolls });
+        };
     }
 
     attemptSessionLogin() {
@@ -72,7 +87,9 @@ class App extends React.Component {
                 <Body login={this.login} 
                       create={this.create}
                       user={this.state.user}
-                      hasAttemptedLogin={this.state.hasAttemptedLogin} />
+                      hasAttemptedLogin={this.state.hasAttemptedLogin}
+                      pollStorage={this.state.pollStorage}
+                      updatePollStorage={this.updatePollStorage} />
                 </div>
                 <Footer />
             </div>

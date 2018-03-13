@@ -151,7 +151,7 @@ app.get("/api/polls/hot", (req, res) => {
         .then(polls => {
             res.json(polls.map(poll => poll.frontendFormatted()));
         }).catch(error => { console.log(error2); res.status(503).send("failed") });
-})
+});
 
 // get specific poll
 app.get("/api/polls/:id", (req, res) => {

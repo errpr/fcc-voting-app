@@ -5,20 +5,24 @@ export default class PollPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            whatup: "hey",
-            poll: null,
+            pollId: this.props.match.params.id,
             showResults: false
         }
 
+        if(this.props.pollStorage[this.state.pollId] && 
+           this.props.pollStorage[this.state.pollId].hasVoted) {
+            this.state.showResults = true;
+        }
+
         this.handleVote = (e) => {
-            fetch(`/api/polls/${this.state.poll.id}/vote/${e.target.getAttribute("data-choice-id")}`, {
+            fetch(`/api/polls/${this.state.pollId}/vote/${e.target.getAttribute("data-choice-id")}`, {
                 method: "POST",
                 headers: {
                     "Content-Length": 0,
                 },
                 credentials: "same-origin"
-            }).then(response => response.ok ? response.json() : this.state.poll)
-            .then(json => this.setState({ poll: json, showResults: true }));
+            }).then(response => response.ok ? response.json() : null)
+            .then(json => this.props.updatePollStorage(json));
         }
 
         this.showResults = (_e) => {
@@ -37,7 +41,12 @@ export default class PollPage extends React.Component {
                 credentials: "same-origin"
             })
             .then(response => response.ok ? response.json() : null)
-            .then(json => json && this.setState({ poll: json, showResults: json.hasVoted }))
+            .then(json => {
+                if(json) {
+                    this.props.updatePollStorage(json);
+                    this.setState({showResults: json.hasVoted });
+                }
+            });
         } else {
             setTimeout(this.fetchAfterSessionLoginAttempt.bind(this), 100);
         }
@@ -48,20 +57,25 @@ export default class PollPage extends React.Component {
     }
 
     render() {
+        let poll = null;
+        if(this.props.pollStorage[this.state.pollId]) {
+            poll = this.props.pollStorage[this.state.pollId];
+        }
+        if(!poll) {
+            return(<div className="body">Loading</div>);
+        }
         return(
             <div className="body">
-                { this.state.poll &&
-                    <Poll poll={this.state.poll} 
-                          showResults={this.state.showResults}
-                          handleVote={this.handleVote} />
-                }
-                {   this.state.poll          && 
-                    this.state.showResults   && 
+                <Poll poll={poll} 
+                        showResults={this.state.showResults}
+                        handleVote={this.handleVote} />
+                {
+                    this.state.showResults && 
                     <button onClick={this.showVoteButtons} className="big-button">
-                        {this.state.poll.hasVoted ? "Change My Vote" : "Place My Vote"}
+                        {poll.hasVoted ? "Change My Vote" : "Place My Vote"}
                     </button> 
                 }
-                {   this.state.poll         && 
+                {
                     !this.state.showResults && 
                     <button onClick={this.showResults} className="big-button">Show Results</button>
                 }

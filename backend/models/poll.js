@@ -61,8 +61,9 @@ pollSchema.methods.frontendFormatted = function(user_id = null) {
         owner: {
             id: hashids.encodeHex(this.owner),
             name: this.ownerName,
-        }
-    }
+        },
+        modifiedDate: this.modifiedDate
+    };
     if(user_id) {
         let hasVoted = this.votes.find(vote => vote.owner == user_id);
         if(hasVoted) {

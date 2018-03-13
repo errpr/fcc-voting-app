@@ -11,7 +11,10 @@ export default function Body(props) {
     return(
         <div className="body-container">
             <Switch>
-                <Route exact path="/" render={(props2) => <FrontPage {...props2} />} />
+                <Route exact path="/" render={(props2) => <FrontPage 
+                                                            pollStorage={props.pollStorage}
+                                                            updatePollStorage={props.updatePollStorage}
+                                                            {...props2} />} />
                 <Route exact path="/login" render={() => <LoginPage
                                                             user={props.user} 
                                                             login={props.login} />} />
@@ -20,15 +23,21 @@ export default function Body(props) {
                                                                     create={props.create} />} />
                 <Route exact path="/polls/create" render={(props2) => <CreatePollPage 
                                                                         hasAttemptedLogin={props.hasAttemptedLogin} 
-                                                                        user={props.user} 
+                                                                        user={props.user}
+                                                                        pollStorage={props.pollStorage}
+                                                                        updatePollStorage={props.updatePollStorage} 
                                                                         {...props2} /> } />
                 <Route path="/users/:id" render={(props2) => <UserPage 
                                                                 user={props.user}
-                                                                hasAttemptedLogin={props.hasAttemptedLogin} 
+                                                                hasAttemptedLogin={props.hasAttemptedLogin}
+                                                                pollStorage={props.pollStorage}
+                                                                updatePollStorage={props.updatePollStorage} 
                                                                 {...props2} />} />
                 <Route path="/polls/:id" render={(props2) => <PollPage 
                                                                 hasAttemptedLogin={props.hasAttemptedLogin} 
-                                                                user={props.user} 
+                                                                user={props.user}
+                                                                pollStorage={props.pollStorage} 
+                                                                updatePollStorage={props.updatePollStorage}
                                                                 {...props2} />} />
             </Switch>
         </div>
