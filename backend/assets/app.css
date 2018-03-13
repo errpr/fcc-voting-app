@@ -101,6 +101,7 @@ button, a {
     color: #444;
     text-align: center;
     text-decoration: none;
+    margin: 1em;
 }
 
 .small-button {

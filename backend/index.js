@@ -118,9 +118,13 @@ app.post('/api/users', (req, res) => {
 
 // get all polls created by specific user
 app.get("/api/users/:id/polls", (req, res) => {
-    let user_id = hashids.decodeHex(req.params.id);
+    let requested_user_id = hashids.decodeHex(req.params.id);
+    let user_id = null;
+    if(req.session) {
+        user_id = req.session.user;
+    }
     console.log(user_id);
-    User.findById(user_id, function(error, user) {
+    User.findById(requested_user_id, function(error, user) {
         if(error) {
             console.log(error);
             res.status(404).send("not found");
@@ -136,7 +140,7 @@ app.get("/api/users/:id/polls", (req, res) => {
                     id: hashids.encodeHex(user.id),
                     name: user.username,
                 },
-                polls: polls.map(poll => poll.frontendFormatted())
+                polls: polls.map(poll => poll.frontendFormatted(user_id))
             });
         }).catch(error2 => { console.log(error2); res.status(503).send("failed") });
     });
@@ -145,11 +149,15 @@ app.get("/api/users/:id/polls", (req, res) => {
 
 // get polls for the front page
 app.get("/api/polls/hot", (req, res) => {
+    let user_id = null;
+    if(req.session) {
+        user_id = req.session.user;
+    }
     Poll.find({})
         .sort({ modifiedDate: -1 })
         .limit(10)
         .then(polls => {
-            res.json(polls.map(poll => poll.frontendFormatted()));
+            res.json(polls.map(poll => poll.frontendFormatted(user_id)));
         }).catch(error => { console.log(error2); res.status(503).send("failed") });
 });
 
@@ -171,6 +179,10 @@ app.get("/api/polls/:id", (req, res) => {
 
 // vote for a choice
 app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
+    let user_id = null;
+    if(req.session) {
+        user_id = req.session.user;
+    }
     let poll_id = hashids.decodeHex(req.params.id);
     let choice_id = req.params.choice_id;
     Poll.findById(poll_id, function(error, poll) {
@@ -193,7 +205,7 @@ app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
                     res.status(503).send("failed");
                     return;
                 }
-                res.json(poll.frontendFormatted());
+                res.json(poll.frontendFormatted(user_id));
             });
         } else {
             poll.votes.push({
@@ -207,14 +219,83 @@ app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
                     res.status(503).send("failed");
                     return;
                 }
-                res.json(poll.frontendFormatted());
+                res.json(poll.frontendFormatted(user_id));
             });
         }
     });
 });
 
+// update a poll
+app.put("/api/polls", (req, res) => {
+    let userId = req.session.user;
+    if(!userId) {
+        res.status(403).send("nah");
+        return;
+    }
+    let pollId = req.body.id;
+    Poll.findById(pollId, function(error, poll) {
+        if(error) {
+            console.log(error);
+            res.status(400).send("failed");
+            return;
+        }
+
+        console.log(poll);
+        if(poll.owner !== userId) {
+            res.status(403).send("nah");
+            return;
+        }
+
+        poll.question = req.body.question;
+        let oldChoices = poll.choices;
+        let sameChoices = [];
+        let newChoices = [];
+        for(let i in req.body.choices) {
+            let choice = req.body.choices[i];
+            let sameChoice = oldChoices.find(e => e.name == choice);
+            if(sameChoice) {
+                sameChoices.push(sameChoice);
+                continue;
+            } else {
+                newChoices.push({
+                    name: choice
+                });
+            }
+        }
+
+        poll.choices = sameChoices.concat(newChoices);
+        poll.save(function(error, newPoll) {
+            if(error) {
+                console.log(error);
+                res.status(503).send("failed");
+                return;
+            }
+            res.json(newPoll.frontendFormatted());
+        });
+
+        // let deleteChoices = [];
+        // for(let i in oldChoices) {
+        //     let choice = oldChoices[i];
+        //     let sameChoice = sameChoices.find(e => e._id == choice._id);
+        //     if(sameChoice) {
+        //         continue;
+        //     } else {
+        //         deleteChoices.push(choice);
+        //     }
+        // }
+
+    });
+});
+
 // create new poll
 app.post("/api/polls", (req, res) => {
+    let user_id = null;
+    if(req.session) {
+        user_id = req.session.user;
+    } else {
+        res.status(403).send("Must log in to create a poll");
+        return;
+    }
     Poll.create({
         question: req.body.question,
         choices: req.body.choices,
@@ -226,7 +307,7 @@ app.post("/api/polls", (req, res) => {
             res.status(400).send("failed");
             return;
         }
-        res.json(poll.frontendFormatted());
+        res.json(poll.frontendFormatted(user_id));
     });
 });
 

@@ -4,20 +4,14 @@ import { Redirect } from 'react-router-dom';
 export default class EditPollPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            id: null,
-            question: "",
-            choices: ["",""],
-            pollRedirect: null
-        }
 
-        if(props.poll) {
-            this.state = {
-                id: poll.id,
-                question: poll.question,
-                choices: poll.choices.map(choice => choice.name),
-                pollRedirect: null,
-            }
+        let id = this.props.match.params.id; 
+
+        this.state = {
+            id: id,
+            question: this.props.pollStorage[id].question,
+            choices: this.props.pollStorage[id].choices.map(choice => choice.name),
+            pollRedirect: null
         }
 
         this.handleChangeQ = (e) => {
@@ -40,7 +34,7 @@ export default class EditPollPage extends React.Component {
         this.handleSubmit = (_e) => {
             let choices = this.state.choices.filter(choice => choice != "");
             this.setState({ choices: choices });
-            fetch("/api/polls", { 
+            fetch(`/api/polls/${this.state.id}`, { 
                 method: "PUT",
                 credentials: "same-origin",
                 headers: {
@@ -50,9 +44,12 @@ export default class EditPollPage extends React.Component {
                     id: this.state.id,
                     question: this.state.question,
                     choices: choices.map(c => { return { name: c } } )
-                })
-            }).then(response => response.ok ? response.json() : null)
-            .then(json => this.setState({ pollRedirect: json }));
+                });
+            }).then(response => response.ok ? response.json() : null);
+            .then(json => {
+                this.props.updatePollStorage(json);
+                this.setState({ pollRedirect: true });
+            });
         }
 
     }
@@ -63,7 +60,7 @@ export default class EditPollPage extends React.Component {
         }
 
         if(this.state.pollRedirect) {
-            return(<Redirect to={`/polls/${this.state.pollRedirect.id}`} />)
+            return(<Redirect to={`/polls/${this.state.id}`} />)
         }
 
         const choiceInputs = this.state
@@ -78,7 +75,8 @@ export default class EditPollPage extends React.Component {
 
         return(
             <div className="body">
-                <h1>Create a Poll</h1>
+                <h1>Edit Poll</h1>
+                <p className="subtext">Note: changing a poll option will delete the votes for that choice.</p>
                 <label htmlFor="question">Question</label>
                 <input type="text" className="create-poll-input" name="question" onChange={this.handleChangeQ} value={this.state.question} />
                 <div className="spacer"></div>

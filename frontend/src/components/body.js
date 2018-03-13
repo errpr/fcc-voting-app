@@ -33,7 +33,13 @@ export default function Body(props) {
                                                                 pollStorage={props.pollStorage}
                                                                 updatePollStorage={props.updatePollStorage} 
                                                                 {...props2} />} />
-                <Route path="/polls/:id" render={(props2) => <PollPage 
+                <Route exact path="/polls/:id/edit" render={(props2) => <EditPollPage
+                                                                            hasAttemptedLogin={props.hasAttemptedLogin}
+                                                                            user={props.user} 
+                                                                            pollStorage={props.pollStorage}
+                                                                            updatePollStorage={props.updatePollStorage}
+                                                                            {...props2} />} />
+                <Route exact path="/polls/:id" render={(props2) => <PollPage 
                                                                 hasAttemptedLogin={props.hasAttemptedLogin} 
                                                                 user={props.user}
                                                                 pollStorage={props.pollStorage} 
