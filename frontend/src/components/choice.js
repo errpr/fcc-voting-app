@@ -25,7 +25,7 @@ export default function Choice(props) {
         return(
             <li className="choice-container">
                 <div className="choice-name">{props.choice.name}</div>
-                <button onClick={props.handleVote} data-choice-id={props.choice._id} className="choice-vote-button big-button">Vote</button>
+                <button onClick={props.handleVote} data-choice-id={props.choice._id} className="choice-vote-button small-button">Vote</button>
             </li>
         );
     }

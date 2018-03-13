@@ -6,6 +6,7 @@ import CreateUserPage from './create-user-page';
 import CreatePollPage from './create-poll-page';
 import UserPage from './user-page';
 import PollPage from './poll-page';
+import EditPollPage from './edit-poll-page';
 
 export default function Body(props) {
     return(

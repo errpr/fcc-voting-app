@@ -5,13 +5,19 @@ export default class EditPollPage extends React.Component {
     constructor(props) {
         super(props);
 
-        let id = this.props.match.params.id; 
+        let id = props.match.params.id; 
+        console.log(id);
 
         this.state = {
             id: id,
-            question: this.props.pollStorage[id].question,
-            choices: this.props.pollStorage[id].choices.map(choice => choice.name),
+            question: "", 
+            choices: ["",""], 
             pollRedirect: null
+        }
+
+        if(props.pollStorage[id]) {
+            this.state.question = props.pollStorage[id].question;
+            this.state.choices = props.pollStorage[id].choices.map(choice => choice.name);
         }
 
         this.handleChangeQ = (e) => {
@@ -44,14 +50,32 @@ export default class EditPollPage extends React.Component {
                     id: this.state.id,
                     question: this.state.question,
                     choices: choices.map(c => { return { name: c } } )
-                });
-            }).then(response => response.ok ? response.json() : null);
+                })
+            }).then(response => response.ok ? response.json() : null)
             .then(json => {
                 this.props.updatePollStorage(json);
                 this.setState({ pollRedirect: true });
             });
         }
 
+    }
+
+    updateLocalState(poll) {
+        if(!poll) { return; }
+        this.setState({
+            question: poll.question,
+            choices: poll.choices.map(choice => choice.name)
+        });
+    }
+
+    componentDidMount() {
+        fetch(`/api/polls/${this.state.id}`, {
+            credentials: "same-origin"
+        }).then(response => response.ok ? response.json() : null)
+        .then(json => {
+            this.props.updatePollStorage(json);
+            this.updateLocalState(json);
+        });
     }
 
     render() {
@@ -76,13 +100,13 @@ export default class EditPollPage extends React.Component {
         return(
             <div className="body">
                 <h1>Edit Poll</h1>
-                <p className="subtext">Note: changing a poll option will delete the votes for that choice.</p>
+                
                 <label htmlFor="question">Question</label>
                 <input type="text" className="create-poll-input" name="question" onChange={this.handleChangeQ} value={this.state.question} />
                 <div className="spacer"></div>
                 <label>Choices <button className="small-button" onClick={this.addChoice}>+</button></label>
                 {choiceInputs}
-                <div className="spacer"></div>
+                <p className="subtext">Note: changing a poll option will delete the votes for that choice.</p>
                 <button className="big-button" onClick={this.handleSubmit}>Submit</button>
             </div>
         )

@@ -46,6 +46,12 @@ pollSchema.pre('save', function(next) {
         poll.choices.forEach(function(choice) {
             choice.voteSum = poll.votes.filter(vote => vote.choice == choice.id).length;
         });
+        poll.votes.forEach(function(vote) {
+            voteChoice = poll.choices.find(choice => choice.id == vote.choice);
+            if(!voteChoice) {
+                vote.remove();
+            }
+        });
         poll.totalVotes = poll.votes.length;
     }
     this.modifiedDate = Date.now();

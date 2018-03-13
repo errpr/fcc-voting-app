@@ -123,7 +123,6 @@ app.get("/api/users/:id/polls", (req, res) => {
     if(req.session) {
         user_id = req.session.user;
     }
-    console.log(user_id);
     User.findById(requested_user_id, function(error, user) {
         if(error) {
             console.log(error);
@@ -134,7 +133,6 @@ app.get("/api/users/:id/polls", (req, res) => {
         Poll.find({owner: user.id})
         .sort({ modifiedDate: -1 })
         .then(polls => {
-            console.log(polls[0].question);
             res.json({
                 user: {
                     id: hashids.encodeHex(user.id),
@@ -226,13 +224,13 @@ app.post("/api/polls/:id/vote/:choice_id", (req, res) => {
 });
 
 // update a poll
-app.put("/api/polls", (req, res) => {
+app.put("/api/polls/:id", (req, res) => {
     let userId = req.session.user;
     if(!userId) {
         res.status(403).send("nah");
         return;
     }
-    let pollId = req.body.id;
+    let pollId = hashids.decodeHex(req.params.id);
     Poll.findById(pollId, function(error, poll) {
         if(error) {
             console.log(error);
@@ -240,8 +238,7 @@ app.put("/api/polls", (req, res) => {
             return;
         }
 
-        console.log(poll);
-        if(poll.owner !== userId) {
+        if(poll.owner != userId) {
             res.status(403).send("nah");
             return;
         }
@@ -252,14 +249,12 @@ app.put("/api/polls", (req, res) => {
         let newChoices = [];
         for(let i in req.body.choices) {
             let choice = req.body.choices[i];
-            let sameChoice = oldChoices.find(e => e.name == choice);
+            let sameChoice = oldChoices.find(e => e.name == choice.name);
             if(sameChoice) {
                 sameChoices.push(sameChoice);
                 continue;
             } else {
-                newChoices.push({
-                    name: choice
-                });
+                newChoices.push(choice);
             }
         }
 
@@ -272,18 +267,6 @@ app.put("/api/polls", (req, res) => {
             }
             res.json(newPoll.frontendFormatted());
         });
-
-        // let deleteChoices = [];
-        // for(let i in oldChoices) {
-        //     let choice = oldChoices[i];
-        //     let sameChoice = sameChoices.find(e => e._id == choice._id);
-        //     if(sameChoice) {
-        //         continue;
-        //     } else {
-        //         deleteChoices.push(choice);
-        //     }
-        // }
-
     });
 });
 

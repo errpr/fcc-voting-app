@@ -20,8 +20,8 @@ export default function MiniPoll(props) {
                                 choice={choice} 
                                 showResults={true} 
                                 totalVotes={props.poll.totalVotes} />)}
+                    {mutedChoices > 0 && <li><p className="subtext"> ... And {mutedChoices} more choices.</p></li>}
                 </ul>
-                {mutedChoices > 0 && <p className="subtext"> ... And {mutedChoices} more choices.</p>}
             </Link>
         </div>
     );

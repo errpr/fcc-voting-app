@@ -10,12 +10,9 @@ export default class PollPage extends React.Component {
             showResults: false
         }
 
-        if(this.props.pollStorage[this.state.pollId]){
-            console.log("poll exists");
-            if(this.props.pollStorage[this.state.pollId].hasVoted) {
-                console.log("should set showResults instantly here.");
-                this.state.showResults = true;
-            }
+        if(this.props.pollStorage[this.state.pollId] &&
+           this.props.pollStorage[this.state.pollId].hasVoted) {
+            this.state.showResults = true;
         }
 
         this.handleVote = (e) => {
